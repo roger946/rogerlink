@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roger Andrade | Gestor de Performance de Loja</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0D1B2A;
+    --navy2: #1A2E45;
+    --gold: #E8A020;
+    --gold-light: #F5B84A;
+    --white: #FFFFFF;
+    --gray: #8A9BB0;
+    --light: #F0F4F8;
+    --card-bg: #132234;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 48px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,160,32,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(26,62,92,0.4) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 48px 0 32px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .avatar-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  .avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: var(--navy2);
+    border: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .avatar-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(232,160,32,0.25);
+    animation: pulse-ring 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.06); opacity: 1; }
+  }
+
+  .name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .bio {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.6;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .bio strong {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  /* Palestra urgent card */
+  .urgent-card {
+    background: linear-gradient(135deg, #1a2e0d 0%, #0D1B2A 100%);
+    border: 1px solid rgba(80,200,80,0.35);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.6s 0.22s ease both;
+    transition: transform 0.2s;
+  }
+
+  .urgent-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #50c850, #a0e060);
+    border-radius: 14px 14px 0 0;
+  }
+
+  .urgent-card:hover { transform: translateY(-2px); }
+
+  .urgent-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(80,200,80,0.15);
+    border: 1px solid rgba(80,200,80,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #7dda58;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .urgent-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #7dda58;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
+  .urgent-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .urgent-meta {
+    font-size: 12px;
+    color: #7dda58;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  .urgent-desc {
+    font-size: 12.5px;
+    color: var(--gray);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .urgent-speaker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+  }
+
+  .speaker-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(232,160,32,0.2);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .speaker-info { flex: 1; }
+
+  .speaker-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+  }
+
+  .speaker-role {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.3;
+  }
+
+  .urgent-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #50c850;
+    color: #0a1a05;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .urgent-cta:hover { background: #6dda6d; }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 20px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .divider-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  /* PDF Feature Card */
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(232,160,32,0.3);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.6s 0.25s ease both;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 14px 14px 0 0;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(232,160,32,0.6);
+  }
+
+  .card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+
+  .card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+
+  .card-cta:hover { background: var(--gold-light); }
+
+  .card-cta svg {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Regular link buttons */
+  .link-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    transition: transform 0.2s, border-color 0.2s, background 0.2s;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .link-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(232,160,32,0.3);
+    background: #1a2e45;
+  }
+
+  .link-btn:nth-child(1) { animation-delay: 0.3s; }
+  .link-btn:nth-child(2) { animation-delay: 0.38s; }
+  .link-btn:nth-child(3) { animation-delay: 0.46s; }
+  .link-btn:nth-child(4) { animation-delay: 0.54s; }
+
+  .btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(232,160,32,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+
+  .btn-content { flex: 1; }
+
+  .btn-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 2px;
+  }
+
+  .btn-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.3;
+  }
+
+  .btn-arrow {
+    color: var(--gold);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 8px 0 16px;
+    animation: fadeUp 0.6s 0.6s ease both;
+  }
+
+  .stat-box {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 14px 8px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--gray);
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    animation: fadeUp 0.6s 0.7s ease both;
+  }
+
+  .footer-text {
+    font-size: 11px;
+    color: rgba(138,155,176,0.5);
+    letter-spacing: 1px;
+  }
+
+  .footer-handle {
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  .footer-handle span {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* FEICON badge */
+  .feicon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(232,160,32,0.12);
+    border: 1px solid rgba(232,160,32,0.3);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  .feicon-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="feicon-badge">
+      <span class="feicon-dot"></span>
+      Estaremos na FEICON 2026
+    </div>
+
+    <div class="avatar-wrap">
+      <div class="avatar">RA</div>
+      <div class="avatar-ring"></div>
+    </div>
+
+    <div class="name">Roger Andrade</div>
+    <div class="title">Gestor de Performance de Loja</div>
+    <p class="bio">
+      <strong>16 anos dentro do varejo de MatCon.</strong> Fui COO por 3 anos em operacao de grande porte em Sao Paulo. 
+      Hoje ajudo lojistas a enxergar onde o caixa some mesmo quando as vendas estao boas.
+    </p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-num">16</div>
+      <div class="stat-label">anos no setor MatCon</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">15+</div>
+      <div class="stat-label">pessoas lideradas diretas</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">COO</div>
+      <div class="stat-label">operacao SP capital</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- FEICON Palestra urgent card -->
+  <div class="urgent-card">
+    <div class="urgent-label">
+      <span class="urgent-dot"></span>
+      Daqui a 13 dias
+    </div>
+    <div class="urgent-title">Palestra: Reforma Tributaria e Impactos no MatCon</div>
+    <div class="urgent-meta">07 de Abril, 14h - 16h30 | Pavilhao 8, Sala 105 | FEICON 2026</div>
+    <div class="urgent-desc">
+      Sao Paulo Expo. Entrada gratuita com credenciamento. Uma das palestras mais relevantes do setor neste ano, com dados reais sobre o que muda na operacao de quem vende material de construcao.
+    </div>
+    <div class="urgent-speaker">
+      <div class="speaker-avatar">SD</div>
+      <div class="speaker-info">
+        <div class="speaker-name">Sergio Domingues</div>
+        <div class="speaker-role">CEO Azure Sistemas | Economista USP | 34 anos no varejo MatCon</div>
+      </div>
+    </div>
+    <a href="https://wa.me/5511976033130?text=Oi%20Roger%2C%20quero%20saber%20mais%20sobre%20a%20palestra%20na%20FEICON" class="urgent-cta" target="_blank">
+      Quero participar desta palestra
+    </a>
+  </div>
+
+  <!-- Feature Card: PDF gratuito -->
+  <div class="feature-card">
+    <div class="card-label">Material Gratuito</div>
+    <div class="card-title">Por que sua loja vende bem e o caixa ainda nao sobra?</div>
+    <div class="card-desc">
+      Um PDF com dados reais do setor em 2026 e as 4 causas mais comuns de caixa negativo em loja de MatCon. Sem enrolacao.
+    </div>
+    <a href="roger_caixa_matcon.pdf" class="card-cta" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+      </svg>
+      Baixar PDF Gratuito
+    </a>
+  </div>
+
+  <!-- Links -->
+  <div>
+    <a href="https://wa.me/5511976033130?text=Oi%20Roger%2C%20vi%20seu%20perfil%20e%20quero%20entender%20como%20voce%20pode%20ajudar%20minha%20loja" class="link-btn" target="_blank">
+      <div class="btn-icon">📊</div>
+      <div class="btn-content">
+        <div class="btn-label">Analise gratuita</div>
+        <div class="btn-title">Quero entender onde meu caixa esta sendo consumido</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a href="https://wa.me/5511976033130?text=Oi%20Roger%2C%20quero%20entrar%20na%20comunidade%20de%20gestao%20de%20loja" class="link-btn" target="_blank">
+      <div class="btn-icon">👥</div>
+      <div class="btn-content">
+        <div class="btn-label">Comunidade exclusiva</div>
+        <div class="btn-title">Conteudo aprofundado sobre gestao de loja de MatCon</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a href="https://instagram.com/rogerandrade.coo" class="link-btn" target="_blank">
+      <div class="btn-icon">📱</div>
+      <div class="btn-content">
+        <div class="btn-label">Instagram</div>
+        <div class="btn-title">Conteudo semanal sobre gestao, equipe e resultado de loja</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <a href="https://wa.me/5511976033130?text=Oi%20Roger%2C%20quero%20conversar" class="link-btn" target="_blank">
+      <div class="btn-icon">📞</div>
+      <div class="btn-content">
+        <div class="btn-label">Contato direto</div>
+        <div class="btn-title">Falar com Roger pelo WhatsApp</div>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">REPRESENTANTE EXCLUSIVO AZURE SISTEMAS</div>
+    <div class="footer-text" style="margin-top:2px;">ARARAQUARA E REGIAO</div>
+    <div class="footer-handle" style="margin-top:10px;"><span>@rogerandrade.coo</span></div>
+  </div>
+
+</div>
+</body>
+</html>
